@@ -1,0 +1,97 @@
+import re
+from tkinter import HIDDEN
+import numpy as np
+
+
+
+def sigma(z):
+    return 1 / (1 + np.exp(-z))
+
+with open('data_toy_problem/data_dark_bright_test_4000.csv') as f:
+    data_list = f.readlines()
+
+with open('data_mnist/mnist_train.csv', "r") as f:
+    mnist = f.readlines()
+
+
+class Network:
+    def __init__(self, num_input, num_hidden, num_output, learning_rate):
+        self.input = num_input
+        self.hidden = num_hidden
+        self.output = num_output
+        self.wa = np.random.rand(self.hidden, self.input) -0.5
+        self.wb = np.random.rand(self.output, self.hidden) -0.5
+        self.learning_rate = learning_rate
+
+    def feedforward(self, x):
+        hidden = sigma(np.dot(self.wa, x)).reshape(-1,1)
+        output = sigma(np.dot(self.wb, hidden))
+        return output, hidden
+
+    def test(self, data_list):
+        count = 0 
+        for line in data_list:
+            x = line.split(",")
+            target = int(x[0])
+
+            for i in range(len(x)):
+                x[i] = int(x[i])
+            x = x[1:]
+
+            output = self.feedforward(x)
+
+            
+            if np.argmax(output) == target:
+                count += 1
+        percent = 100 / len(data_list)*count
+
+        
+        return percent
+
+    def train(self, data):
+        count = 0 
+        cost = 0 
+        for line in data:
+            x = line.split(",")
+            target = int(x[0])
+
+            for i in range(len(x)):
+                x[i] = int(x[i])
+            x = x[1:]
+            x = np.array(x).reshape(-1,1) / 255
+
+
+            output, hidden = self.feedforward(x)
+            
+            
+            t = np.zeros(self.output)
+            t[target] = 1
+            t = t.reshape(-1,1)
+        
+
+            Eout = t - output
+            cost = np.linalg.norm(Eout)
+
+            zwuescheschritt = (Eout * output * (1-output))
+
+            vc = np.dot(zwuescheschritt, hidden.T)
+
+            self.wb = self.wb + self.learning_rate * vc
+
+            Ehidden = ((np.dot(self.wb.T, Eout)))
+
+            wa_zwuescheschritt = ((Ehidden * hidden) * (1 - hidden))
+
+            self.wa = self.wa + self.learning_rate * np.dot(wa_zwuescheschritt, x.T)
+
+            if np.argmax(output) == target:
+                count += 1            
+            print(cost)
+
+        percent = 100 / len(data)*count
+        return percent
+    
+work = Network(784,100,10, 0.11)
+
+print(work.train(mnist))
+

@@ -1,0 +1,21 @@
+txt = "123, my name is Peter, I am 26 years old"
+
+x = txt.split(", ")
+
+print(x) 
+
+print(x[0])
+
+
+# if output[0] > output[1] and target == 0 or output[0] < output[1] and target == 1:
+#     count += 1
+
+# 4000 = 100%
+# x    = y%        y% = 100/4000*x
+
+        # x = np.array(x)
+        # x = x.reshape(-1,1)
+
+a = [1, 5, 3, 9,2,1,4,5,34,2,3]
+x = max(a) 
+print(x)

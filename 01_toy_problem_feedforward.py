@@ -27,11 +27,12 @@ for line in data_list:
     hidden = sigma(np.dot(wa, x))
         
     output = sigma(np.dot(wb,hidden))
-    
-    if output[0] > output[1] and target == 0 or output[0] < output[1] and target == 1:
+
+    if np.argmax(output) == target:
         count += 1
 
 percent = 100 / len(data_list)*count
+    
 print(percent)
 
 
